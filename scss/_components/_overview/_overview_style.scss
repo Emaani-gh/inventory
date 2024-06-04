@@ -1,0 +1,19 @@
+.small-analysis-card {
+  width: 30%;
+
+  @media (max-width: 780px) {
+    width: 48%;
+  }
+
+  @media (max-width: 484px) {
+    width: 100%;
+  }
+}
+
+.overview-h {
+  height: calc(100vh - 70px);
+}
+
+.last-sales-graph {
+  // height: 300px;
+}

@@ -1,0 +1,92 @@
+@import "../node_modules/bootstrap/scss/bootstrap.scss"; 
+
+::-webkit-scrollbar {
+  width: 0;
+}
+
+::-webkit-scrollbar-track {
+  background: none;
+  display: none;
+}
+
+::-webkit-scrollbar-thumb {
+  border-radius: 10px;
+  -webkit-box-shadow: inset 0 0 6px rgba(201, 201, 201, 0.5);
+}
+
+.page-scroll-on-add-data {
+  height: calc(100vh - 120px);
+}
+
+// .page-scroll-on-add-data-checkout {
+//   height: calc(100vh - 25px);
+//   background: red;
+// }
+
+.w-150px {
+  width: 400px;
+
+  @media (max-width: 852px) {
+    width: 100%;
+  }
+}
+
+.h-fit-content {
+  height: fit-content !important;
+}
+
+.w-fit-content {
+  width: fit-content !important;
+}
+
+.order-detail-w {
+  width: 100%;
+}
+
+@media (min-width: 600px) {
+  .order-detail-w {
+    width: 50%;
+  }
+}
+
+.selling-product-card {
+  height: 90px;
+}
+
+.bg-black-subtle {
+  background: rgba(0, 0, 0, 0.76);
+}
+
+.MuiCircularProgress-root {
+  width: 20px !important;
+  height: 20px !important;
+}
+
+.notification-widget {
+  width: 100%;
+  position: absolute;
+  display: grid;
+  place-items: center;
+  top: 10px;
+  visibility: hidden;
+  opacity: 0;
+  clip-path: polygon(0% 0%, 100% 0%, 100% 0%, 0% 0%);
+  transition: all ease-in 200ms;
+
+  .notification-card {
+    max-width: 400px;
+    min-width: 270px;
+  }
+
+  .notification-color-type {
+    width: 20px;
+    height: 20px;
+  }
+}
+
+.show-notification-card {
+  clip-path: polygon(0% 0%, 100% 0%, 100% 100%, 0% 100%);
+  visibility: visible;
+  opacity: 1;
+  z-index: 3;
+}

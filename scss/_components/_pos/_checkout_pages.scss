@@ -1,0 +1,19 @@
+.returning-customers-container {
+  height: 430px;
+}
+
+.user-option-btn {
+  width: 200px;
+
+  @media (max-width: 425px) {
+    width: 100%;
+  }
+}
+
+.summary-card {
+  width: 500px;
+
+  @media (max-width: 550px) {
+    width: 100%;
+  }
+}

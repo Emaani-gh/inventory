@@ -1,0 +1,61 @@
+.cursor-pointer {
+  cursor: pointer;
+}
+
+.place-items-center {
+  place-items: center;
+}
+
+.long-td {
+  max-width: 250px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.medium-td {
+  max-width: 200px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.h-100px {
+  height: 100px;
+}
+
+.pos-checkout {
+  min-width: 400px;
+  max-width: 400px;
+
+  @media (max-width: 1024px) {
+    display: none !important;
+
+  }
+}
+
+.sm-checkout-bag-btn {
+   display: none;
+
+    @media (max-width: 1024px) {
+    display: block
+
+  }
+}
+
+.pos-sell-container {
+  height: calc(100vh - 250px);
+}
+
+.checkout-user-selection-form {
+  width: 500px;
+  height: 600px;
+
+  @media (max-width:500px) {
+    width: 100%;
+  }
+}
+
+.img-object-fit {
+  object-fit: contain !important;
+}

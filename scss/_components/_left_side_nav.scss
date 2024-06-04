@@ -1,0 +1,46 @@
+.left-sidebar-section {
+  min-width: 80%;
+  transition: all 0.3s ease-in-out;
+
+  @media (max-width: 767px) {
+    // width: 0 !important;
+    // min-width: 0 !important;
+    // padding: 0 !important;
+  }
+}
+
+@media (min-width: 600px) {
+  .left-sidebar-section {
+    min-width: 16rem;
+    max-width: 18rem;
+  }
+}
+
+.bg-primary-secondary {
+  background: blue;
+}
+
+.toggle-side-bar {
+  width: 0 !important;
+  min-width: 0;
+  padding: 0 !important;
+}
+
+.tree-children {
+  transition: all 0.3s ease-in-out;
+}
+
+.tree-children-item {
+  transition: all 0.3s linear;
+}
+.collapse-hide {
+  visibility: hidden;
+  height: 0;
+  margin: 0 !important;
+  opacity: 0;
+}
+
+.collapse-show {
+  visibility: visible;
+  opacity: 1;
+}
