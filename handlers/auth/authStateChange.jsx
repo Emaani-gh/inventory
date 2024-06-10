@@ -44,7 +44,6 @@ export const userAuthStateChange = async (dispatch) => {
 export const userLoginAuthStateChange = async (dispatch) => {
   const pathname = usePathname();
   const navigate = useRouter();
-  const userUrls = useSelector((state) => state.userHolder.userUrls);
 
   useEffect(() => {
     onAuthStateChanged(auth, async (currentUser) => {
@@ -59,19 +58,19 @@ export const userLoginAuthStateChange = async (dispatch) => {
           if (pathname === "/") {
             console.log("We are in first if");
 
-            if (userUrls) {
-              console.log("user is in login section");
-
-              navigate.replace(`/${userUrls[0]}`);
-            } else {
-              window.location.reload();
-            }
+            navigate.replace(`/inventory`);
           } else {
             navigate.replace(pathname);
           }
         }
       } else {
-        navigate.replace("/");
+        if (pathname === "/") {
+          navigate.replace("/");
+        } else if (pathname === "/sign-up") {
+          navigate.replace("/sign-up");
+        }else {
+          navigate.replace("/");
+        }
         dispatch(setToggleLoginPageLoading(false));
       }
     });
@@ -80,7 +79,7 @@ export const userLoginAuthStateChange = async (dispatch) => {
 
 export const fetchUserFromDatabase = async (uid) => {
   try {
-    const userRef = rTRef(realtimeDb, `employees/${uid}`);
+    const userRef = rTRef(realtimeDb, `users/${uid}`);
     const snapshot = await get(userRef);
 
     if (snapshot.exists()) {
@@ -92,20 +91,4 @@ export const fetchUserFromDatabase = async (uid) => {
     console.error(error);
     return null;
   }
-};
-
-export const userAuthUrls = async () => {
-  const pathname = usePathname();
-  const userUrls = useSelector((state) => state.userHolder.userUrls);
-
-  useEffect(() => {
-    if (userUrls) {
-      // const pathName = pathname.split("/")[1];
-      // if (userUrls.includes(pathName)) {
-      //   // nothing happens here
-      // } else {
-      //   window.location.replace(`/${userUrls[0]}`);
-      // }
-    }
-  }, []);
 };

@@ -35,12 +35,6 @@ const TopNavbar = () => {
     signOut(auth).then(() => {
       dispatch(logoutUser(null));
 
-      dispatch(updateUserUrls(null));
-
-      dispatch(removeUserAction(null));
-
-      dispatch(loadAvailableRole(null));
-
       location.reload();
     });
   };
@@ -98,7 +92,7 @@ const TopNavbar = () => {
           Navbar
         </a>
         <button
-          className="navbar-toggler"
+          className="navbar-toggler fs-14px"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"
@@ -109,7 +103,8 @@ const TopNavbar = () => {
           <span className="navbar-toggler-icon"></span>
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
-          <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
+          <div className="navbar-nav mx-auto mb-2 mb-lg-0"></div>
+         {/* <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
             <li className="nav-item">
               <Link className="nav-link active text-white" href="/dashboard">
                 Dashboard
@@ -120,7 +115,7 @@ const TopNavbar = () => {
                 Inventory
               </Link>
             </li>
-          </ul>
+          </ul>*/}
           <div className="dropdown">
             <button
               className="btn border p-0 px-2 py-1 dropdown-toggle text-white"

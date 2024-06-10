@@ -1,5 +1,3 @@
-import { app } from "@/utils/firebase";
-
 var admin = require("firebase-admin");
 var serviceAccount = require("../../../serviceAccountKey.json");
 
@@ -10,8 +8,7 @@ export async function POST(req, res) {
   if (admin.apps.length === 0) {
     admin.initializeApp({
       credential: admin.credential.cert(serviceAccount),
-      databaseURL: "https://upsolutions-777-default-rtdb.firebaseio.com",
-      // name: "upsolutions",
+      databaseURL: process.env.NEXT_PUBLIC_FirebaseDatabaseURL,
     });
   }
 

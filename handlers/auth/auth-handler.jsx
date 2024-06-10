@@ -1,7 +1,8 @@
 import { kFirebaseError, kSuccess } from "@/constants";
 import { auth, realtimeDb, rtRef } from "@/utils/firebase";
 import { signInWithEmailAndPassword } from "firebase/auth";
-import { onValue } from "firebase/database";
+import axios from "axios";
+import { set } from "firebase/database";
 
 export const handleLoginSubmit = async (e) => {
   e.preventDefault();
@@ -40,44 +41,33 @@ export const createNewUserAccount = async (
   }
 };
 
+export const employeeHandler = async (e, userUid, emailAddress) => {
+  const form = e.target;
 
-// export const newLoginLoginAction = async (e) => {
-//   const employeeRef = rtRef(realtimeDb, "employees");
+  const formData = new FormData(form);
 
-//   onValue(employeeRef, (snapshot) => {
-//     Object.entries(snapshot.val()).map(([key, employeeDetail]) => {
-//       console.log("emp", employeeDetail);
-//       // if (employeeDetail.userUid === userId) {
-//       //   setCurrentDetail(employeeDetail);
-//       // }
-//     });
+  const formValues = {};
 
-//     return kSuccess;
-//   });
-// };
+  for (let [name, value] of formData.entries()) {
+    if (name.includes("password")) {
+    } else {
+      formValues[name] = value;
+    }
+  }
 
-export const checkUserExistence = async (userEmailAddress) => {
-  // return new Promise((resolve, reject) => {
-  //   const employeeRef = rtRef(realtimeDb, "employees");
+  formValues["userUid"] = userUid;
 
-  //   onValue(employeeRef, (snapshot) => {
-  //     if (snapshot.val() !== null) {
-  //       console.log("snapshot.val()", snapshot.val());
-  //       // const keys = Object.keys(snapshot.val()).filter((employee) =>
-  //       //   console.log("emp", employee)
-  //       // );
-  //       resolve(keys);
-  //     } else {
-  //       reject(new Error("Snapshot value is null"));
-  //     }
-  //   });
-  // });
+  if (emailAddress) {
+    formValues["emailAddress"] = emailAddress;
+  }
 
-  const employeeRef = rtRef(realtimeDb, "employees");
+  try {
+    // Update the employee data in the Realtime Database
+    await set(rtRef(realtimeDb, `/users/${userUid}`), formValues);
 
-  onValue(employeeRef, (snapshot) => {
-    console.log("snapshot", snapshot.val());
-  });
+    return kSuccess;
+  } catch (error) {
+    // Handle any errors that occur during data storage
+    alert(error?.message);
+  }
 };
-
-// roleName === userEmailAddress;

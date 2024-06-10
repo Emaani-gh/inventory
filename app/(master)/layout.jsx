@@ -7,6 +7,8 @@ import LoadingPage from "@/components/LoadingPage";
 import NotificationWidget from "@/components/system-notification/NotificationWidget";
 
 import TopNavbar from "@/components/TopNavbar";
+import { parentLayoutEffects } from "@/utils/parent-useEffect";
+import { userLoginAuthStateChange } from "@/handlers/auth/authStateChange";
 
 const layout = ({ children }) => {
   const dispatch = useDispatch();
@@ -14,6 +16,10 @@ const layout = ({ children }) => {
   const pageLoading = useSelector(
     (state) => state.stateProviderHolder.masterPageLoading
   );
+
+  parentLayoutEffects(dispatch)
+
+  userLoginAuthStateChange(dispatch)
 
   return pageLoading ? (
     <LoadingPage text="first" />

@@ -5,7 +5,7 @@ export const stateProviderSlice = createSlice({
   initialState: {
     toggleSidebar: "",
     toggleCheckoutDarkBackground: null,
-    masterPageLoading: false,
+    masterPageLoading: true,
     loginPageLoading: true,
 
     // Notifications to be handle

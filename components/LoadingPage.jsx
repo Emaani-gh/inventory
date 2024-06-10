@@ -11,30 +11,10 @@ import { useSelector } from "react-redux";
 // };
 
 const LoadingPage = ({ text }) => {
-  const [approvedURL, setApprovedURL] = useState();
-
-  const userActions = useSelector((state) => state.userHolder.userActions);
-
-  const userUrls = useSelector((state) => state.userHolder.userUrls);
-
-  // userActions.map((userRole) => {
-  //   userRole?.rootItems.map((role) => {
-  //     console.log("urls", role.name);
-  //   });
-  // });
-
-  // useEffect(() => {
-  //   console.log("urls", userUrls);
-  // }, []);
-
-  // useEffect(() => {
-//   if (text === "Second") {
-//     loadRolesAction();
-//   }
-  // }, [text]);
 
   return (
     <div className="vh-100 d-flex align-items-center flex-column gap-3 justify-content-center">
+      {text}
       <Image
         src="/images/ups-logo.webp"
         width={50}
