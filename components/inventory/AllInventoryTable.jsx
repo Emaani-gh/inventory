@@ -17,6 +17,7 @@ const AllInventoryTable = () => {
 
   return (
     <div className="overflow-scroll fs-14px h-100">
+      <InventorySearchForm />
       <div className="table-container">
         <table className="table w-100 text-nowrap table-responsive table-hover">
           <thead className="table-dark position-relative">

@@ -1,72 +1,56 @@
 "use client";
 
-import { kErrorStatus, kSuccess, kSuccessStatus } from "@/constants";
-import {
-  createNewUserAccount,
-  employeeHandler,
-  handleLoginSubmit,
-} from "@/handlers/auth/auth-handler";
-import { userLoginAuthStateChange } from "@/handlers/auth/authStateChange";
 import { CircularProgress } from "@mui/material";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import LoadingPage from "../LoadingPage";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setToggleLoginPageLoading,
-  setToggleSystemNotification,
-} from "@/redux/slices/stateProviderSlice";
+import React, { useState } from "react";
 import { useRouter } from "next/navigation";
 
 const SignUpForm = () => {
   const [loadingBtn, setLoadingBtn] = useState(false);
-  const dispatch = useDispatch();
-  const navigate = useRouter();
+  const [errorMessage, setErrorMessage] = useState("");
+
+  const router = useRouter();
 
   const handler = async (e) => {
-    e.preventDefault()
+    e.preventDefault();
+
     setLoadingBtn(true);
 
-    const createUserAccount = await createNewUserAccount(
-      e.target.emailAddress.value,
-      e.target.password.value,
-      e.target.confirmPassword.value
-    );
+    const firstName = e.target.firstName.value;
+    const lastName = e.target.lastName.value;
+    const emailAddress = e.target.emailAddress.value;
+    const password = e.target.password.value;
+    const confirmPassword = e.target.confirmPassword.value;
 
-    if (createUserAccount.status === kErrorStatus) {
-      dispatch(
-        setToggleSystemNotification({
-          show: "show-notification-card",
-          title: "Error",
-          body: createUserAccount.data,
-          color: "danger",
-        })
-      );
+    try {
+      const response = await fetch("/api/create-new-user-account", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          firstName,
+          lastName,
+          emailAddress,
+          password,
+          confirmPassword,
+        }),
+      });
 
-      setLoadingBtn(false);
-    } else if (createUserAccount.status === kSuccessStatus) {
-      const result = await employeeHandler(e, createUserAccount.data.uid);
+      const data = await response.json();
 
-      if (result === kSuccess) {
-        dispatch(
-          setToggleSystemNotification({
-            show: "show-notification-card",
-            title: "Success",
-            body: `User created successfully. Please login with your new account`,
-            color: "success",
-          })
-        );
-        navigate.push("/");
-        e.target.reset();
+      if (response.ok) {
+        localStorage.setItem("token", data.token);
+        router.push("/mainDashboard");
+      } else {
+        setErrorMessage(data.message);
       }
+    } catch (error) {
+      setErrorMessage("An error occurred. Please try again.");
+    } finally {
+      setLoadingBtn(false);
     }
   };
-
-  useEffect(() => {
-    dispatch(setToggleLoginPageLoading(true));
-  }, []);
-
-  // userLoginAuthStateChange(dispatch);
 
   return (
     <form onSubmit={handler}>
@@ -115,8 +99,10 @@ const SignUpForm = () => {
         required={true}
       />
 
+      {errorMessage && <p className="text-danger">{errorMessage}</p>}
+
       {loadingBtn ? (
-        <button className="btn w-100 btn-primary mt-2">
+        <button className="btn w-100 btn-primary mt-2" disabled>
           <CircularProgress className="text-white" />
         </button>
       ) : (

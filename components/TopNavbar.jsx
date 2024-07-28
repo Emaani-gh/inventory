@@ -1,98 +1,45 @@
 "use client";
 
-// import { loadAvailableRole } from "@/redux/controllerSlices/all-roles-controller";
-import { setToggleSidebar } from "@/redux/slices/stateProviderSlice";
-import {
-  logoutUser,
-  removeUserAction,
-  updateUserUrls,
-} from "@/redux/slices/userSlice";
-import { auth } from "@/utils/firebase";
-import {
-  Menu,
-  Notifications,
-  Person2Rounded,
-  SellOutlined,
-} from "@mui/icons-material";
-import { signOut } from "firebase/auth";
 import Link from "next/link";
-import React from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
+import { useRouter } from "next/navigation";
+import { Person2Rounded } from "@mui/icons-material";
+import jwt from "jsonwebtoken";
+import Image from "next/image";
+import logo from "@/public/images/logo.jpg";
 
 const TopNavbar = () => {
-  const dispatch = useDispatch();
+  const [userDetails, setUserDetails] = useState(null);
+  const router = useRouter();
 
-  const userDetails = useSelector((state) => state.userHolder.userDetail);
+  useEffect(() => {
+    const token = localStorage.getItem("token");
+    if (token) {
+      try {
+        const decoded = jwt.decode(token);
+        setUserDetails(decoded);
+      } catch (error) {
+        console.error("Error decoding token:", error);
+      }
+    }
+  }, []);
 
-  const toggleSidebar = () => {
-    dispatch(setToggleSidebar("toggle-side-bar"));
+  const signUserLog = () => {
+    localStorage.removeItem("token");
+    router.push("/");
   };
 
   const currentDate = new Date();
 
-  const signUserLog = async () => {
-    // setLoadingBtn(true);
-    signOut(auth).then(() => {
-      dispatch(logoutUser(null));
-
-      location.reload();
-    });
-  };
-
   return (
-    // <div className="bg-primary border-left py-2 px-1 d-flex flex-md-row  justify-content-between text-white align-items-between">
-    //   <div className="d-flex align-items-center justify-content-between flex-fill">
-    //     {/* <Menu className="cursor-pointer" onClick={toggleSidebar} /> */}
-
-    //     {/* <Link
-    //       href="/pos"
-    //       className="d-flex gap-1 border px-2 py-1 rounded bg-primary-subtle align-items-center cursor-pointer text-decoration-none text-white fs-14px"
-    //     >
-    //       <SellOutlined className="fs-6" />
-    //       <div>POS</div>
-    //     </Link> */}
-    //   </div>
-
-    //   <div className="d-flex align-items-center gap-4 flex-fill justify-content-end">
-    //     <div>
-    //       <span className="fs-14px fw-bold">{`${currentDate.getDate()} ${currentDate.toLocaleString(
-    //         "default",
-    //         { month: "short" }
-    //       )} ${currentDate.getFullYear()}`}</span>
-    //     </div>
-
-    //     <div>
-    //       <Notifications className="fs-6" />
-    //     </div>
-
-    //     <div className="dropdown">
-    //       <button
-    //         className="btn border p-0 px-2 py-1 dropdown-toggle text-white"
-    //         type="button"
-    //         data-bs-toggle="dropdown"
-    //         aria-expanded="false"
-    //       >
-    //         <Person2Rounded />
-    //       </button>
-    //       <ul className="dropdown-menu">
-    //         <li className="dropdown-item">
-    //           {userDetails?.firstName + " " + userDetails?.lastName}
-    //         </li>
-    //         <li className="dropdown-item cursor-pointer" onClick={signUserLog}>
-    //           Log out
-    //         </li>
-    //       </ul>
-    //     </div>
-    //   </div>
-    // </div>
-
-    <nav className="navbar navbar-expand-lg bg-primary">
+    <nav className="navbar navbar-expand-lg bg-primary bg-gradient mb-4">
       <div className="container-fluid">
-        <a className="navbar-brand" href="#">
-          Navbar
-        </a>
+        <Link className="navbar-brand" href="/mainDashboard">
+          <Image src={logo} width={50} height={40} alt="logo" />
+        </Link>
+        <div className="text-white bold fs-4">EPA</div>
         <button
-          className="navbar-toggler fs-14px"
+          className="navbar-toggler fs-14px custom-toggler bg-light"
           type="button"
           data-bs-toggle="collapse"
           data-bs-target="#navbarSupportedContent"
@@ -104,19 +51,7 @@ const TopNavbar = () => {
         </button>
         <div className="collapse navbar-collapse" id="navbarSupportedContent">
           <div className="navbar-nav mx-auto mb-2 mb-lg-0"></div>
-         {/* <ul className="navbar-nav mx-auto mb-2 mb-lg-0">
-            <li className="nav-item">
-              <Link className="nav-link active text-white" href="/dashboard">
-                Dashboard
-              </Link>
-            </li>
-            <li className="nav-item ">
-              <Link className="nav-link text-white" href="/inventory">
-                Inventory
-              </Link>
-            </li>
-          </ul>*/}
-          <div className="dropdown">
+          <div className="dropdown ms-auto">
             <button
               className="btn border p-0 px-2 py-1 dropdown-toggle text-white"
               type="button"
@@ -125,9 +60,11 @@ const TopNavbar = () => {
             >
               <Person2Rounded />
             </button>
-            <ul className="dropdown-menu">
+            <ul className="dropdown-menu dropdown-menu-end">
               <li className="dropdown-item">
-                {userDetails?.firstName + " " + userDetails?.lastName}
+                {userDetails
+                  ? `${userDetails.firstName} ${userDetails.lastName}`
+                  : "Loading..."}
               </li>
               <li
                 className="dropdown-item cursor-pointer"

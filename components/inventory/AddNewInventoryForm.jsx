@@ -1,60 +1,96 @@
 "use client";
 
-import { kSuccess } from "@/constants";
-import { inventoryHandler } from "@/handlers/inventory/inventory-handler";
-import { setToggleSystemNotification } from "@/redux/slices/stateProviderSlice";
 import { CircularProgress } from "@mui/material";
-import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import React, { useEffect, useState } from "react";
 
 const AddNewInventoryForm = () => {
   const [loadingBtn, setLoadingBtn] = useState(false);
+  const [inventoryCategoryList, setInventoryCategoryList] = useState([]);
+  const [formData, setFormData] = useState({
+    itemName: "",
+    stock: "",
+    unitPrice: "",
+    expenseCategoryId: "",
+  });
 
-  const userDetails = useSelector((state) => state.userHolder.userDetail);
+  useEffect(() => {
+    const fetchInventoryCategories = async () => {
+      try {
+        const response = await fetch("/api/getCategory");
+        const categories = await response.json();
+        setInventoryCategoryList(categories);
+      } catch (error) {
+        console.error("Error fetching categories:", error);
+      }
+    };
 
-  const dispatch = useDispatch();
-
-  const inventoryCategoryList = useSelector(
-    (state) => state.inventoryHolder.inventoryCategoryList
-  );
+    fetchInventoryCategories();
+  }, []);
 
   const formHandler = async (e) => {
     e.preventDefault();
-
     setLoadingBtn(true);
 
-    const result = await inventoryHandler(e, userDetails.userUid);
+    const token = localStorage.getItem("token");
 
-    if (result === kSuccess) {
-      dispatch(
-        setToggleSystemNotification({
-          show: "show-notification-card",
-          title: "Success",
-          body: `Item added successfully`,
-          color: "success",
-        })
-      );
-      e.target.reset();
+    if (!token) {
+      alert("No token found. Please login again.");
+      setLoadingBtn(false);
+      return;
+    }
+
+    try {
+      const response = await fetch("/api/add-new-inventory", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${token}`,
+        },
+        body: JSON.stringify(formData),
+      });
+
+      if (response.ok) {
+        alert("Item added successfully");
+        e.target.reset();
+        setFormData({
+          itemName: "",
+          stock: "",
+          unitPrice: "",
+          expenseCategoryId: "",
+        });
+      } else {
+        const errorData = await response.json();
+        alert(`Error: ${errorData.message}`);
+      }
+    } catch (error) {
+      console.error("Error adding item:", error);
+      alert("An error occurred while adding the item.");
     }
 
     setLoadingBtn(false);
   };
 
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setFormData((prevData) => ({ ...prevData, [name]: value }));
+  };
+
   return (
     <form
-      className="page-scroll-on-add-data overflow-y-scroll pb-3"
+      className="page-scroll-on-add-data overflow-y-scroll pb-3 container"
       onSubmit={formHandler}
     >
-      <div className="bg-white p-3 rounded mb-3">
+      <div className="bg-white rounded mb-3">
         <div className="mb-4">
           <label className="form-label text-muted fs-14px">Name</label>
-
           <input
             type="text"
             className="form-control"
             name="itemName"
             required={true}
-            placeholder="enter new item name here"
+            placeholder="Enter new item name here"
+            value={formData.itemName}
+            onChange={handleInputChange}
           />
         </div>
 
@@ -67,7 +103,8 @@ const AddNewInventoryForm = () => {
                 className="form-control"
                 name="stock"
                 required={true}
-
+                value={formData.stock}
+                onChange={handleInputChange}
               />
             </div>
             <div className="col-lg-6">
@@ -82,6 +119,8 @@ const AddNewInventoryForm = () => {
                     className="form-control"
                     name="unitPrice"
                     required={true}
+                    value={formData.unitPrice}
+                    onChange={handleInputChange}
                   />
                 </div>
               </div>
@@ -91,20 +130,29 @@ const AddNewInventoryForm = () => {
 
         <div className=" mb-3">
           <div className="form-floating">
-            <select className="form-select" name="expenseCategoryId">
-              {inventoryCategoryList ? (
-                Object.entries(inventoryCategoryList).map(
-                  ([key, category], index) => (
-                    <option key={index} value={category.categoryId}>
-                      {category.categoryName}
-                    </option>
-                  )
-                )
+            <select
+              className="form-select"
+              name="expenseCategoryId"
+              value={formData.expenseCategoryId}
+              onChange={handleInputChange}
+              required
+            >
+              <option value="" disabled>
+                Select a category
+              </option>
+              {inventoryCategoryList.length > 0 ? (
+                inventoryCategoryList.map((category, index) => (
+                  <option key={index} value={category._id}>
+                    {category.categoryName}
+                  </option>
+                ))
               ) : (
-                <option>empty</option>
+                <option value="" disabled>
+                  No categories available
+                </option>
               )}
             </select>
-            <label>What is the expense category</label>
+            <label>What is the Inventory category</label>
           </div>
         </div>
       </div>
@@ -115,7 +163,7 @@ const AddNewInventoryForm = () => {
         </button>
       ) : (
         <button type="submit" className="btn btn-success">
-          Add Expense
+          Add New
         </button>
       )}
     </form>

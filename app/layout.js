@@ -1,6 +1,6 @@
+import { AuthProvider } from "@/components/authContext";
 import "./global/styles.css";
 import { Providers } from "@/redux/Provider";
-
 
 export const metadata = {
   title: "Create Next App",
@@ -11,7 +11,9 @@ export default function RootLayout({ children }) {
   return (
     <html lang="en">
       <body suppressHydrationWarning={true}>
-        <Providers>{children}</Providers>
+        <Providers>
+          <AuthProvider>{children}</AuthProvider>
+        </Providers>
 
         <script
           src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"

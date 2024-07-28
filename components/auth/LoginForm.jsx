@@ -1,61 +1,58 @@
 "use client";
-
-import { kSuccess } from "@/constants";
-import { handleLoginSubmit } from "@/handlers/auth/auth-handler";
-import { userLoginAuthStateChange } from "@/handlers/auth/authStateChange";
+import React, { useState } from "react";
+import { useRouter } from "next/navigation";
+import axios from "axios";
 import { CircularProgress } from "@mui/material";
 import Link from "next/link";
-import React, { useEffect, useState } from "react";
-import LoadingPage from "../LoadingPage";
-import { useDispatch, useSelector } from "react-redux";
-import {
-  setToggleLoginPageLoading,
-  setToggleSystemNotification,
-} from "@/redux/slices/stateProviderSlice";
+import { useAuth } from "../authContext";
 
 const LoginForm = () => {
   const [loadingBtn, setLoadingBtn] = useState(false);
-  const dispatch = useDispatch();
-  const loginPageLoader = useSelector(
-    (state) => state.stateProviderHolder.loginPageLoading
-  );
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [error, setError] = useState(null);
+  const router = useRouter();
+  const { setIsAuthenticated } = useAuth();
 
-  const handler = async (e) => {
+  const handleLogin = async (e) => {
+    e.preventDefault();
     setLoadingBtn(true);
-    const authResult = await handleLoginSubmit(e);
+    setError(null);
 
-    if (authResult !== kSuccess) {
-      dispatch(
-        setToggleSystemNotification({
-          show: "show-notification-card",
-          title: "Login failed",
-          body: `${authResult?.message}`,
-          color: "danger",
-        })
-      );
+    try {
+      const res = await axios.post("/api/sign-in", { email, password });
+      const { token } = res.data;
 
+      // Store token in local storage
+      localStorage.setItem("token", token);
+
+      // Update authentication state
+      setIsAuthenticated(true);
+
+      // Redirect to the mainDashboard
+      router.push("/mainDashboard");
+    } catch (err) {
+      setError(err.response?.data?.error || "Login failed");
       setLoadingBtn(false);
     }
   };
 
-  useEffect(() => {
-    dispatch(setToggleLoginPageLoading(true));
-  }, []);
-
-
-  userLoginAuthStateChange(dispatch);
-
-  return loginPageLoader ? (
-    <LoadingPage />
-  ) : (
-    <form onSubmit={handler}>
+  return (
+    <form onSubmit={handleLogin}>
+      {error && (
+        <div className="alert alert-danger" role="alert">
+          {error}
+        </div>
+      )}
       <label className="form-label fs-14px">Email address</label>
       <input
         type="email"
         name="email"
         placeholder="mightyboateng@gmail.com"
         className="form-control mb-3"
-        required={true}
+        value={email}
+        onChange={(e) => setEmail(e.target.value)}
+        required
       />
 
       <label className="form-label fs-14px">Password</label>
@@ -64,7 +61,9 @@ const LoginForm = () => {
         name="password"
         placeholder="********"
         className="form-control mb-3"
-        required={true}
+        value={password}
+        onChange={(e) => setPassword(e.target.value)}
+        required
       />
 
       <div className="mb-5">
@@ -77,8 +76,8 @@ const LoginForm = () => {
       </div>
 
       {loadingBtn ? (
-        <button className="btn w-100 btn-primary mt-2">
-          <CircularProgress className="text-white" />
+        <button className="btn w-100 btn-primary mt-2" disabled>
+          <CircularProgress className="text-white" size={24} />
         </button>
       ) : (
         <button type="submit" className="btn w-100 btn-primary mt-2">
@@ -87,10 +86,7 @@ const LoginForm = () => {
       )}
 
       <div className="mt-3">
-        <Link
-          href="/sign-up"
-          className="fs-14px text-primary fw-light"
-        >
+        <Link href="/sign-up" className="fs-14px text-primary fw-light">
           Create an account
         </Link>
       </div>

@@ -12,6 +12,7 @@ export const handleLoginSubmit = async (e) => {
 
   try {
     const user = await signInWithEmailAndPassword(auth, email, password);
+    console.log(user);
     if (user) {
       return kSuccess;
     }

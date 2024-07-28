@@ -4,7 +4,6 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "compile:sass": "sass --watch scss:app/global",
     "build": "next build",
     "start": "next start",
     "lint": "next lint"
@@ -16,9 +15,14 @@
     "@mui/material": "^5.15.19",
     "@reduxjs/toolkit": "^2.2.5",
     "axios": "^1.7.2",
+    "bcrypt": "^5.1.1",
     "bootstrap": "^5.3.3",
+    "cookie": "^0.6.0",
     "firebase": "^10.12.2",
     "firebase-admin": "^12.1.1",
+    "jsonwebtoken": "^9.0.2",
+    "mongodb": "^6.8.0",
+    "mongoose": "^8.5.1",
     "next": "14.2.3",
     "react": "^18",
     "react-dom": "^18",
